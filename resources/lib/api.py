@@ -21,7 +21,7 @@ standard_header = {
 
 def get_app_token():
     try:
-        html = urlopen('https://zattoo.com/').read().decode('utf-8')
+        html = urlopen('https://zattoo.com/int/').read().decode('utf-8')
         return search("window\.appToken\s*=\s*'(.*)'", html).group(1)
     except URLError:
         from .functions import warning
