@@ -2,7 +2,7 @@
 <addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.3" provider-name="PUR3, Maven">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
-        <import addon="script.module.kodi-six" version="0.1.0"/>
+        <import addon="script.module.kodi-six" version="0.0.7"/>
         <import addon="script.module.pyxbmct" version="1.2.0"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
