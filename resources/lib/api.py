@@ -30,10 +30,15 @@ def get_app_token():
         return ''
 
 
-def extract_session_id(cookie):
-    if len(cookie) > 0:
-        return search('beaker\.session\.id\s*=\s*([^\s;]*)', cookie[0]).group(1)
-    return ''
+def extract_session_id(cookie_dict):
+    session_id = None
+    if cookie_dict:
+        for cookie in cookie_dict:
+            match = search('beaker\.session\.id\s*=\s*([^\s;]*)', cookie)
+            if match:
+                session_id = match.group(1)
+                break
+    return session_id
 
 
 def get_session_cookie():
