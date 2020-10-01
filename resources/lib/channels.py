@@ -85,7 +85,7 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
                         next = '[B][COLOR blue]Danach:[/COLOR][/B] %s (%i Min.)' % (
                                 channel['next']['t'], (channel['next']['e'] - channel['next']['s']) / 60)
                         item.addContextMenuItems(
-                            [('EPG Daten laden', 'xbmc.RunPlugin(plugin://plugin.video.zattoo_com/?mode=epg&id=%s)' % channel['now']['id'])]
+                            [('EPG Daten laden', 'RunPlugin(plugin://plugin.video.zattoo_com/?mode=epg&id=%s)' % channel['now']['id'])]
                         )
                     except:
                         next = ''
