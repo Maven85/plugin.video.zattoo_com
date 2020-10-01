@@ -29,12 +29,30 @@ def get_app_token():
     try:
         html = urlopen('https://zattoo.com/de').read().decode('utf-8')
         for js_url in findall('<script.*src=\'(.*?\.js)\'', html):
-            js_content = urlopen('https://zattoo.com{0}'.format(js_url)).read().decode('utf-8')
+            js_content_url = 'https://zattoo.com{0}'.format(js_url)
+            js_content = urlopen(js_content_url).read().decode('utf-8')
             matches = findall('(token-[a-z0-9]*\.json)', js_content)
             if len(matches) == 1:
-                app_token_res = urlopen('https://zattoo.com/client/{0}'.format(matches[0])).read().decode('utf-8')
+                app_token_url = '{0}/{1}'.format(js_content_url[:js_content_url.rindex('/')], matches[0])
+                app_token_res = urlopen(app_token_url).read().decode('utf-8')
                 app_token = loads(app_token_res).get('app_tid')
                 return app_token
+    except URLError:
+        from .functions import warning
+        return warning('Keine Netzwerkverbindung!', exit=True)
+    except:
+        return ''
+
+
+def get_app_version():
+    try:
+        html = urlopen('https://zattoo.com/de').read().decode('utf-8')
+        for js_url in findall('<script.*src=\'(.*?\.js)\'', html):
+            js_content_url = 'https://zattoo.com{0}'.format(js_url)
+            js_content = urlopen(js_content_url).read().decode('utf-8')
+            matches = findall('exports\.APP_VERSION=\"(.*?)\"', js_content)
+            if len(matches) == 1:
+                return matches[0]
     except URLError:
         from .functions import warning
         return warning('Keine Netzwerkverbindung!', exit=True)
@@ -74,8 +92,7 @@ def extract_session_id(cookie_dict):
 
 
 def get_session_cookie():
-    post_data = ('lang=de&app_version=1.0.0&app_tid={0}&uuid={1}'.format(get_app_token(), uniq_id())).encode('utf-8')
-    xbmc.log('post_data = {0}'.format(post_data))
+    post_data = ('lang=de&app_version={0}&app_tid={1}&uuid={2}'.format(get_app_version(), get_app_token(), uniq_id())).encode('utf-8')
     req = Request('https://zattoo.com/zapi/v2/session/hello', post_data, standard_header)
     response = urlopen(req)
     return extract_session_id([value for key, value in response.headers.items() if key.lower() == 'set-cookie'])
