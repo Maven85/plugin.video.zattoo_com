@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from re import search
+from kodi_six.utils import py2_encode
+from hashlib import md5
+from json import loads
+from re import search, findall
+from time import sleep
+from uuid import UUID
+import xbmc
 import xbmcaddon
 
 try:
@@ -15,19 +21,45 @@ addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
 standard_header = {
     'Accept': 'application/json',
     'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'
 }
 
 
 def get_app_token():
     try:
-        html = urlopen('https://zattoo.com/int/').read().decode('utf-8')
-        return search("window\.appToken\s*=\s*'(.*)'", html).group(1)
+        html = urlopen('https://zattoo.com/de').read().decode('utf-8')
+        for js_url in findall('<script.*src=\'(.*?\.js)\'', html):
+            js_content = urlopen('https://zattoo.com{0}'.format(js_url)).read().decode('utf-8')
+            matches = findall('(token-[a-z0-9]*\.json)', js_content)
+            if len(matches) == 1:
+                app_token_res = urlopen('https://zattoo.com/client/{0}'.format(matches[0])).read().decode('utf-8')
+                app_token = loads(app_token_res).get('app_tid')
+                return app_token
     except URLError:
         from .functions import warning
         return warning('Keine Netzwerkverbindung!', exit=True)
     except:
         return ''
+
+
+def uniq_id():
+    device_id = ''
+    mac_addr = xbmc.getInfoLabel('Network.MacAddress')
+
+    # hack response busy
+    i = 0
+    while not py2_encode(':') in mac_addr and i < 3:
+        i += 1
+        sleep(1)
+        mac_addr = xbmc.getInfoLabel('Network.MacAddress')
+    if py2_encode(':') in mac_addr:
+        device_id = str(UUID(md5(mac_addr.encode('utf-8')).hexdigest()))
+    elif addon.getSetting('device_id'):
+        device_id = addon.getSetting('device_id')
+    else:
+        xbmc.log("[{0}] error: failed to get device id ({1})".format(addon.getAddonInfo('id'), str(mac_addr)))
+    addon.setSetting(id='device_id', value=device_id)
+    return device_id
 
 
 def extract_session_id(cookie_dict):
@@ -42,8 +74,9 @@ def extract_session_id(cookie_dict):
 
 
 def get_session_cookie():
-    post_data = ('lang=en&client_app_token=%s&uuid=d7512e98-38a0-4f01-b820-5a5cf98141fe&format=json' % get_app_token()).encode('utf-8')
-    req = Request('https://zattoo.com/zapi/session/hello', post_data, standard_header)
+    post_data = ('lang=de&app_version=1.0.0&app_tid={0}&uuid={1}'.format(get_app_token(), uniq_id())).encode('utf-8')
+    xbmc.log('post_data = {0}'.format(post_data))
+    req = Request('https://zattoo.com/zapi/v2/session/hello', post_data, standard_header)
     response = urlopen(req)
     return extract_session_id([value for key, value in response.headers.items() if key.lower() == 'set-cookie'])
 
