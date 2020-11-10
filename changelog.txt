@@ -1,3 +1,6 @@
+1.2.7
+- updated api calls
+- import translatePath from xbmcvfs for Kodi Matrix
 1.2.6
 - fixed session extraction
 1.2.5
