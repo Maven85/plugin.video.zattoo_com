@@ -21,22 +21,22 @@ addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
 standard_header = {
     'Accept': 'application/json',
     'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
 }
 
 
-def get_app_token():
+def get_client_app_token():
     try:
-        html = urlopen('https://zattoo.com/de').read().decode('utf-8')
-        for js_url in findall('<script.*src=\'(.*?\.js)\'', html):
+        html = urlopen('https://zattoo.com/login').read().decode('utf-8')
+        for js_url in findall('<script.*src="(.*?\.js)"', html):
             js_content_url = 'https://zattoo.com{0}'.format(js_url)
             js_content = urlopen(js_content_url).read().decode('utf-8')
             matches = findall('(token-[a-z0-9]*\.json)', js_content)
             if len(matches) == 1:
-                app_token_url = '{0}/{1}'.format(js_content_url[:js_content_url.rindex('/')], matches[0])
-                app_token_res = urlopen(app_token_url).read().decode('utf-8')
-                app_token = loads(app_token_res).get('app_tid')
-                return app_token
+                client_app_token_url = '{0}/{1}'.format(js_content_url[:js_content_url.rindex('/')], matches[0])
+                client_app_token_res = urlopen(client_app_token_url).read().decode('utf-8')
+                client_app_token = loads(client_app_token_res).get('session_token')
+                return client_app_token
     except URLError:
         from .functions import warning
         return warning('Keine Netzwerkverbindung!', exit=True)
@@ -46,11 +46,11 @@ def get_app_token():
 
 def get_app_version():
     try:
-        html = urlopen('https://zattoo.com/de').read().decode('utf-8')
-        for js_url in findall('<script.*src=\'(.*?\.js)\'', html):
+        html = urlopen('https://zattoo.com/login').read().decode('utf-8')
+        for js_url in findall('<script.*src="(.*?\.js)"', html):
             js_content_url = 'https://zattoo.com{0}'.format(js_url)
             js_content = urlopen(js_content_url).read().decode('utf-8')
-            matches = findall('exports\.APP_VERSION=\"(.*?)\"', js_content)
+            matches = findall('release:"(\d+\.\d+\.\d+)"', js_content)
             if len(matches) == 1:
                 return matches[0]
     except URLError:
@@ -92,8 +92,8 @@ def extract_session_id(cookie_dict):
 
 
 def get_session_cookie():
-    post_data = ('lang=de&app_version={0}&app_tid={1}&uuid={2}'.format(get_app_version(), get_app_token(), uniq_id())).encode('utf-8')
-    req = Request('https://zattoo.com/zapi/v2/session/hello', post_data, standard_header)
+    post_data = ('app_version={0}&client_app_token={1}&uuid={2}'.format(get_app_version(), get_client_app_token(), uniq_id())).encode('utf-8')
+    req = Request('https://zattoo.com/zapi/v3/session/hello', post_data, standard_header)
     response = urlopen(req)
     return extract_session_id([value for key, value in response.headers.items() if key.lower() == 'set-cookie'])
 
@@ -127,10 +127,10 @@ def login():
         return warning('Bitte Benutzerdaten eingeben!', exit=True)
     handshake_cookie = get_session_cookie()
     try:
-        login_json_data = get_json_data('https://zattoo.com/zapi/v2/account/login', handshake_cookie, {'login': USER_NAME, 'password': PASSWORD})
+        login_json_data = get_json_data('https://zattoo.com/zapi/v3/account/login', handshake_cookie, {'login': USER_NAME, 'password': PASSWORD})
     except HTTPError:
         from .functions import warning
         return warning('Falsche Logindaten!', exit=True)
     import json
-    pg_hash = json.loads(login_json_data)['session']['power_guide_hash']
+    pg_hash = json.loads(login_json_data)['power_guide_hash']
     update_pg_hash(pg_hash)

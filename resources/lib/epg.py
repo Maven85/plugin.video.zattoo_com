@@ -30,9 +30,9 @@ def list_epg_item(pid, SESSION, pg_hash):
     year = program_info['year']
     text = ''
     if desc:
-        text += '[COLOR blue]Plot:[/COLOR] %s\n\n' % desc
+        text += '%s\n\n' % desc
     if categories:
-        text += '[COLOR blue]Kategorien:[/COLOR] %s' % categories
+        text += '[COLOR blue]Kategorie:[/COLOR] %s' % categories
     if genres:
         text += '\n[COLOR blue]Genre:[/COLOR] %s' % genres
     if countries:
