@@ -4,9 +4,8 @@ import sys
 import xbmcplugin
 import xbmcgui
 import json
-import time
 from datetime import datetime, timedelta
-import xbmc
+
 from .api import get_json_data
 
 try:

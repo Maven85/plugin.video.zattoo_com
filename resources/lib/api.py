@@ -50,7 +50,7 @@ def get_app_version():
         for js_url in findall('<script.*src="(.*?\.js)"', html):
             js_content_url = 'https://zattoo.com{0}'.format(js_url)
             js_content = urlopen(js_content_url).read().decode('utf-8')
-            matches = findall('release:"(\d+\.\d+\.\d+)"', js_content)
+            matches = findall('const\s+i="(\d+\.\d+\.\d+)"', js_content)
             if len(matches) == 1:
                 return matches[0]
     except URLError:
