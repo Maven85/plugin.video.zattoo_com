@@ -12,7 +12,7 @@ except:
 
 def get_playlist_url(cid, SESSION):
     from .api import get_json_data
-    json_data = get_json_data('https://zattoo.com/zapi/watch', SESSION, {'stream_type':'hls', 'cid':cid})
+    json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':'hls', 'https_watch_urls':True})
     return json.loads(json_data)['stream']['url']
 
 
