@@ -1,3 +1,5 @@
+1.2.9
+- fixed playback
 1.2.8
 - fixed app version detection
 1.2.7
