@@ -1,3 +1,6 @@
+1.2.10
+- fixed app version detection
+- fixed playback error when session expired
 1.2.9
 - fixed playback
 1.2.8
