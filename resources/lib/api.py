@@ -23,6 +23,7 @@ standard_header = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
 }
+default_app_version = '3.2104.2'
 
 
 def get_client_app_token():
@@ -50,7 +51,7 @@ def get_app_version():
         for js_url in findall('<script.*src="(.*?\.js)"', html):
             js_content_url = 'https://zattoo.com{0}'.format(js_url)
             js_content = urlopen(js_content_url).read().decode('utf-8')
-            matches = findall('const\s+i="(\d+\.\d+\.\d+)"', js_content)
+            matches = findall('web-app@(\d+\.\d+\.\d+)', js_content)
             if len(matches) == 1:
                 return matches[0]
     except URLError:
@@ -58,6 +59,8 @@ def get_app_version():
         return warning('Keine Netzwerkverbindung!', exit=True)
     except:
         return ''
+    xbmc.log('[{0}] warning: failed to detect app version'.format(addon.getAddonInfo('id')))
+    return default_app_version
 
 
 def uniq_id():
@@ -75,7 +78,7 @@ def uniq_id():
     elif addon.getSetting('device_id'):
         device_id = addon.getSetting('device_id')
     else:
-        xbmc.log("[{0}] error: failed to get device id ({1})".format(addon.getAddonInfo('id'), str(mac_addr)))
+        xbmc.log('[{0}] error: failed to get device id ({1})'.format(addon.getAddonInfo('id'), str(mac_addr)))
     addon.setSetting(id='device_id', value=device_id)
     return device_id
 
