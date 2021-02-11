@@ -28,6 +28,7 @@ default_app_version = '3.2104.2'
 
 def get_client_app_token():
     try:
+        client_app_token_url = 'https://zattoo.com/token.json'
         html = urlopen('https://zattoo.com/login').read().decode('utf-8')
         for js_url in findall('<script.*src="(.*?\.js)"', html):
             js_content_url = 'https://zattoo.com{0}'.format(js_url)
@@ -35,9 +36,10 @@ def get_client_app_token():
             matches = findall('(token-[a-z0-9]*\.json)', js_content)
             if len(matches) == 1:
                 client_app_token_url = '{0}/{1}'.format(js_content_url[:js_content_url.rindex('/')], matches[0])
-                client_app_token_res = urlopen(client_app_token_url).read().decode('utf-8')
-                client_app_token = loads(client_app_token_res).get('session_token')
-                return client_app_token
+
+        client_app_token_res = urlopen(client_app_token_url).read().decode('utf-8')
+        client_app_token = loads(client_app_token_res).get('session_token')
+        return client_app_token
     except URLError:
         from .functions import warning
         return warning('Keine Netzwerkverbindung!', exit=True)
