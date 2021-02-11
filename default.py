@@ -12,9 +12,8 @@ if mode == 'watch':
     from resources.lib.watch import get_stream_url
     import xbmcplugin
     import xbmcgui
-    MAX_BITRATE = ('600000', '900000', '1500000', '3000000')[int(addon.getSetting('maxQuality'))]
     cid = params.get('id', '')
-    stream_url = get_stream_url(cid, SESSION, MAX_BITRATE)
+    stream_url = get_stream_url(cid, SESSION)
     xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, xbmcgui.ListItem(path=stream_url))
 elif mode == 'epg':
     from resources.lib.epg import list_epg_item
