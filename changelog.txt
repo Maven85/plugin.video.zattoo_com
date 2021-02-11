@@ -1,3 +1,6 @@
+1.2.11
+- fixed getting the app token
+- changed from hls to hls7 
 1.2.10
 - fixed app version detection
 - fixed playback error when session expired
