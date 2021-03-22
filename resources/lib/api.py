@@ -21,7 +21,7 @@ addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
 standard_header = {
     'Accept': 'application/json',
     'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
 }
 default_app_version = '3.2104.2'
 
@@ -30,8 +30,11 @@ def get_client_app_token():
     try:
         client_app_token_url = 'https://zattoo.com/token.json'
         html = urlopen('https://zattoo.com/login').read().decode('utf-8')
-        for js_url in findall('<script.*src="(.*?\.js)"', html):
-            js_content_url = 'https://zattoo.com{0}'.format(js_url)
+        for js_url in findall('<script.*?src="([^"]*\.js)"', html):
+            js_content_url = 'https://zattoo.com{0}'.format(js_url) if not js_url.startswith('http') else js_url
+            if not js_content_url.startswith('https://zattoo.com'):
+                continue
+            urlopen(js_content_url)
             js_content = urlopen(js_content_url).read().decode('utf-8')
             matches = findall('(token-[a-z0-9]*\.json)', js_content)
             if len(matches) == 1:
@@ -42,7 +45,7 @@ def get_client_app_token():
         return client_app_token
     except URLError:
         from .functions import warning
-        return warning('Keine Netzwerkverbindung!', exit=True)
+        return warning('Apptoken konnte nicht ermittelt werden!', exit=True)
     except:
         return ''
 
@@ -50,15 +53,17 @@ def get_client_app_token():
 def get_app_version():
     try:
         html = urlopen('https://zattoo.com/login').read().decode('utf-8')
-        for js_url in findall('<script.*src="(.*?\.js)"', html):
-            js_content_url = 'https://zattoo.com{0}'.format(js_url)
+        for js_url in findall('<script.*?src="([^"]*\.js)"', html):
+            js_content_url = 'https://zattoo.com{0}'.format(js_url) if not js_url.startswith('http') else js_url
+            if not js_content_url.startswith('https://zattoo.com'):
+                continue
             js_content = urlopen(js_content_url).read().decode('utf-8')
             matches = findall('web-app@(\d+\.\d+\.\d+)', js_content)
             if len(matches) == 1:
                 return matches[0]
     except URLError:
         from .functions import warning
-        return warning('Keine Netzwerkverbindung!', exit=True)
+        return warning('Appversion konnte nicht ermittelt werden!', exit=True)
     except:
         return ''
     xbmc.log('[{0}] warning: failed to detect app version'.format(addon.getAddonInfo('id')))
