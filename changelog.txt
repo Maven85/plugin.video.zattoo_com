@@ -1,3 +1,5 @@
+1.2.12
+- improved regex for js detection
 1.2.11
 - fixed getting the app token
 - changed from hls to hls7 
