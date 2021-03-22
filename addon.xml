@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.11" provider-name="PUR3, Maven">
+<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.12" provider-name="PUR3, Maven">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodi-six" version="0.0.7"/>
@@ -17,6 +17,6 @@
         <assets>
             <icon>icon.png</icon>
         </assets>
-        <news>1.2.11[CR]- fixed getting the app token[CR]- changed from hls to hls7[CR][CR]1.2.10[CR]- fixed app version detection[CR]- fixed playback error when session expired</news>
+        <news>1.2.12[CR]- improved regex for js detection[CR][CR]1.2.11[CR]- fixed getting the app token[CR]- changed from hls to hls7[CR][CR]1.2.10[CR]- fixed app version detection[CR]- fixed playback error when session expired</news>
     </extension>
 </addon>
