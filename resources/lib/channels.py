@@ -36,7 +36,7 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
     utc_now = datetime.utcnow()
     s_datetime = utc_now.replace(minute=0, second=0, microsecond=0) - s_epoch_datetime
     s_utc = int(s_datetime.total_seconds())
-    e_utc = int((s_datetime + timedelta(hours = 6)).total_seconds())
+    e_utc = int((s_datetime + timedelta(hours=6)).total_seconds())
     if not pg_hash or not session:
         from .api import login
         login()
@@ -64,66 +64,66 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
         from .functions import warning
         warning('TV Daten konnten nicht geladen werden!')
         return
-    
-    current_timestamp = int((utc_now.replace(second=0, microsecond=0) - s_epoch_datetime).total_seconds())
-    for channel in json_data['channels']:
-        for quality in channel['qualities']:
-            if quality['availability'] == 'available':
-                id = channel['cid']
-                epg_now = None
-                epg_next = None
-                for index, epg_data in enumerate(guide_data.get('channels').get(id)):
-                    if epg_data.get('s') < current_timestamp and epg_data.get('e') > current_timestamp:
-                        epg_now = epg_data
-                        if len(guide_data.get('channels').get(id)) > index+1:
-                            epg_next = guide_data.get('channels').get(id)[index+1]
-                        break
 
-                channel_name = quality['title']
-                title = '[B][COLOR blue]%s[/COLOR][/B]' % channel_name
-                plot = ''
-                duration_in_seconds = 0
-                art = None
-                cmi = None
-                if epg_now:
-                    s_now = datetime.fromtimestamp(epg_now['s']).strftime('%H:%M')
-                    title = '[COLOR red]%s[/COLOR] %s %s' % (s_now, title, epg_now['t'])
-                    subtitle = epg_now['et']
-                    if subtitle:
-                        title = '%s: %s' % (title, subtitle)
+    if json_data['channels']:
+        from .functions import set_videoinfo, set_streaminfo
+        from xbmc import getInfoLabel
+        kodi_version = int(getInfoLabel('System.BuildVersion').split('.')[0])
+        current_timestamp = int((utc_now.replace(second=0, microsecond=0) - s_epoch_datetime).total_seconds())
+        for channel in json_data['channels']:
+            for quality in channel['qualities']:
+                if quality['availability'] == 'available':
+                    id = channel['cid']
+                    epg_now = None
+                    epg_next = None
+                    for index, epg_data in enumerate(guide_data.get('channels').get(id)):
+                        if epg_data.get('s') < current_timestamp and epg_data.get('e') > current_timestamp:
+                            epg_now = epg_data
+                            if len(guide_data.get('channels').get(id)) > index + 1:
+                                epg_next = guide_data.get('channels').get(id)[index + 1]
+                            break
 
-                    art = dict(thumb='http://thumb.zattic.com/%s/500x288.jpg?r=%s' % (id, current_timestamp))
-                    if USE_FANARTS:
-                        try:
-                            fanart = channel['now']['i'].replace('format_480x360.jpg', 'format_1280x720.jpg')
-                        except:
-                            fanart = 'http://thumb.zattic.com/%s/1280x720.jpg' % id
-                        art.update(dict(fanart=fanart))
-                    duration_in_seconds = round_seconds(epg_now['e'] - current_timestamp)
-                    cmi = [('EPG Daten laden', 'RunPlugin(plugin://plugin.video.zattoo_com/?mode=epg&id=%s)' % epg_now['id'])]
+                    channel_name = quality['title']
+                    title = '[B][COLOR blue]%s[/COLOR][/B]' % channel_name
+                    plot = ''
+                    duration_in_seconds = 0
+                    art = None
+                    cmi = None
+                    if epg_now:
+                        s_now = datetime.fromtimestamp(epg_now['s']).strftime('%H:%M')
+                        title = '[COLOR red]%s[/COLOR] %s %s' % (s_now, title, epg_now['t'])
+                        subtitle = epg_now['et']
+                        if subtitle:
+                            title = '%s: %s' % (title, subtitle)
 
-                if epg_next:
-                    s_next = datetime.fromtimestamp(epg_next['s']).strftime('%H:%M')
-                    e_next = datetime.fromtimestamp(epg_next['e']).strftime('%H:%M')
-                    plot = '%s[B][COLOR blue]Danach: %s - %s (%i Min.)[/COLOR][/B]\n%s' % (
-                            plot, s_next, e_next, (epg_next['e'] - epg_next['s']) / 60, epg_next['t'])
-                    plotsubtitle = epg_next['et']
-                    if plotsubtitle:
-                        plot = '%s: %s' % (plot, plotsubtitle)
+                        art = dict(thumb='http://thumb.zattic.com/%s/500x288.jpg?r=%s' % (id, current_timestamp))
+                        if USE_FANARTS:
+                            try:
+                                fanart = channel['now']['i'].replace('format_480x360.jpg', 'format_1280x720.jpg')
+                            except:
+                                fanart = 'http://thumb.zattic.com/%s/1280x720.jpg' % id
+                            art.update(dict(fanart=fanart))
+                        duration_in_seconds = round_seconds(epg_now['e'] - current_timestamp)
+                        cmi = [('EPG Daten laden', 'RunPlugin(plugin://plugin.video.zattoo_com/?mode=epg&id=%s)' % epg_now['id'])]
 
-                item = xbmcgui.ListItem(title)
-                item.setInfo(type='Video', infoLabels={
-                    'Title': title or channel_name,
-                    'Plot': plot,
-                    }
-                )
-                item.setProperty('IsPlayable', 'true')
-                if art:
-                    item.setArt(art)                
-                if cmi:
-                    item.addContextMenuItems(cmi)
-                if duration_in_seconds > 0:
-                    item.addStreamInfo('video', {'duration': duration_in_seconds})                
-                xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE, url='%s?mode=watch&id=%s' % (URI, id), listitem=item)
-                break
+                    if epg_next:
+                        s_next = datetime.fromtimestamp(epg_next['s']).strftime('%H:%M')
+                        e_next = datetime.fromtimestamp(epg_next['e']).strftime('%H:%M')
+                        plot = '%s[B][COLOR blue]Danach: %s - %s (%i Min.)[/COLOR][/B]\n%s' % (
+                                plot, s_next, e_next, (epg_next['e'] - epg_next['s']) / 60, epg_next['t'])
+                        plotsubtitle = epg_next['et']
+                        if plotsubtitle:
+                            plot = '%s: %s' % (plot, plotsubtitle)
+
+                    item = xbmcgui.ListItem(title)
+                    item = set_videoinfo(item, dict(title=title or channel_name, plot=plot), kodi_version)
+                    item.setProperty('IsPlayable', 'true')
+                    if art:
+                        item.setArt(art)
+                    if cmi:
+                        item.addContextMenuItems(cmi)
+                    if duration_in_seconds > 0:
+                        item = set_streaminfo(item, dict(duration=duration_in_seconds), kodi_version)
+                    xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE, url='%s?mode=watch&id=%s' % (URI, id), listitem=item)
+                    break
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
