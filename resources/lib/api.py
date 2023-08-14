@@ -21,14 +21,15 @@ addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
 standard_header = {
     'Accept': 'application/json',
     'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
+    'Referer': 'https://zattoo.com/client',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
 }
-default_app_version = '3.2104.2'
+default_app_version = '3.2330.2'
 
 
 def get_client_app_token():
     try:
-        client_app_token_url = 'https://zattoo.com/token.json'
+        client_app_token_url = 'https://zattoo.com/client/token.json'
         html = urlopen('https://zattoo.com/login').read().decode('utf-8')
         for js_url in findall('<script.*?src="([^"]*\.js)"', html):
             js_content_url = 'https://zattoo.com{0}'.format(js_url) if not js_url.startswith('http') else js_url
