@@ -45,7 +45,7 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
         pg_hash = addon.getSetting('pg_hash')
         session = addon.getSetting('session')
     try:
-        json_data = json.loads(get_json_data('https://zattoo.com/zapi/v3/cached/%s/channels?' % pg_hash, session))
+        json_data = json.loads(get_json_data('https://zattoo.com/zapi/v4/cached/%s/channels?' % pg_hash, session))
         guide_data = json.loads(get_json_data('https://zattoo.com/zapi/v3/cached/%s/guide?start=%s&end=%s' % (pg_hash, s_utc, e_utc), session))
     except HTTPError:
         from .api import login
@@ -54,7 +54,7 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
         addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
         pg_hash = addon.getSetting('pg_hash')
         session = addon.getSetting('session')
-        json_data = json.loads(get_json_data('https://zattoo.com/zapi/v3/cached/%s/channels?' % pg_hash, session))
+        json_data = json.loads(get_json_data('https://zattoo.com/zapi/v4/cached/%s/channels?' % pg_hash, session))
         guide_data = json.loads(get_json_data('https://zattoo.com/zapi/v3/cached/%s/guide?start=%s&end=%s' % (pg_hash, s_utc, e_utc), session))
     except URLError:
         from .functions import warning
