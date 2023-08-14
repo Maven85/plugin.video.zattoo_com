@@ -72,6 +72,9 @@ def get_app_version():
 
 
 def uniq_id():
+    if addon.getSetting('device_id'):
+        return addon.getSetting('device_id')
+
     device_id = ''
     mac_addr = xbmc.getInfoLabel('Network.MacAddress')
 
@@ -83,12 +86,35 @@ def uniq_id():
         mac_addr = xbmc.getInfoLabel('Network.MacAddress')
     if py2_encode(':') in mac_addr:
         device_id = str(UUID(md5(mac_addr.encode('utf-8')).hexdigest()))
-    elif addon.getSetting('device_id'):
-        device_id = addon.getSetting('device_id')
-    else:
+    elif xbmc.getCondVisibility('System.Platform.Android'):
+        device_id = str(UUID(md5(self.get_android_uuid().encode('utf-8')).hexdigest()))
+
+    if device_id == '':
         xbmc.log('[{0}] error: failed to get device id ({1})'.format(addon.getAddonInfo('id'), str(mac_addr)))
     addon.setSetting(id='device_id', value=device_id)
     return device_id
+
+
+def get_android_uuid(self):
+    from subprocess import PIPE as subprocess_PIPE, Popen as subprocess_Popen
+    from re import sub as re_sub
+    values = ''
+    try:
+        # Due to the new android security we cannot get any type of serials
+        sys_prop = ['ro.product.board', 'ro.product.brand', 'ro.product.device', 'ro.product.locale'
+                    'ro.product.manufacturer', 'ro.product.model', 'ro.product.platform',
+                    'persist.sys.timezone', 'persist.sys.locale', 'net.hostname']
+        # Warning net.hostname property starting from android 10 is deprecated return empty
+        with subprocess_Popen(['/system/bin/getprop'], stdout=subprocess_PIPE) as proc:
+            output_data = proc.communicate()[0].decode('utf-8')
+        list_values = output_data.splitlines()
+        for value in list_values:
+            value_splitted = re_sub(r'\[|\]|\s', '', value).split(':')
+            if value_splitted[0] in sys_prop:
+                values += value_splitted[1]
+    except Exception:
+        pass
+    return values
 
 
 def extract_session_id(cookie_dict):
@@ -105,6 +131,7 @@ def extract_session_id(cookie_dict):
 def get_session_cookie():
     post_data = ('app_version={0}&client_app_token={1}&uuid={2}'.format(get_app_version(), get_client_app_token(), uniq_id())).encode('utf-8')
     req = Request('https://zattoo.com/zapi/v3/session/hello', post_data, standard_header)
+    xbmc.log('[{0}]: post_data = {1}'.format(addon.getAddonInfo('id'), post_data))
     response = urlopen(req)
     return extract_session_id([value for key, value in response.headers.items() if key.lower() == 'set-cookie'])
 
