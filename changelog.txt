@@ -1,3 +1,7 @@
+1.2.14
+- fix: getting session
+- feat: generation of a UUID for Android version 11 and higher, since "Network.MacAddress" returns an empty string
+- chore: updated api calls
 1.2.13
 - fixed deprecated warning when setting video info/stream tags for Kodi 20+
 1.2.12
