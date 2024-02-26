@@ -66,9 +66,9 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
         return
 
     if json_data['channels']:
-        from .functions import set_videoinfo, set_streaminfo
+        from .functions import set_videoinfo, set_streaminfo, get_kodi_version
         from xbmc import getInfoLabel
-        kodi_version = int(getInfoLabel('System.BuildVersion').split('.')[0])
+        kodi_version = get_kodi_version()
         current_timestamp = int((utc_now.replace(second=0, microsecond=0) - s_epoch_datetime).total_seconds())
         for channel in json_data['channels']:
             for quality in channel['qualities']:

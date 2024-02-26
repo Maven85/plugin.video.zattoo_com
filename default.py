@@ -9,12 +9,19 @@ params = dict(part.split('=') for part in sys.argv[2][1:].split('&') if len(part
 mode = params.get('mode', '')
 
 if mode == 'watch':
+    from resources.lib.functions import get_kodi_version
     from resources.lib.watch import get_stream_url
     import xbmcplugin
     import xbmcgui
     cid = params.get('id', '')
     stream_url = get_stream_url(cid, SESSION)
-    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, xbmcgui.ListItem(path=stream_url))
+    listitem = xbmcgui.ListItem(path=stream_url)
+    if get_kodi_version() >= 21:
+        listitem.setContentLookup(False)
+        listitem.setMimeType('application/dash+xml')
+        listitem.setProperty('inputstream', 'inputstream.adaptive')
+
+    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)
 elif mode == 'epg':
     from resources.lib.epg import list_epg_item
     pid = params.get('id', '')

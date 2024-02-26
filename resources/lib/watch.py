@@ -13,13 +13,15 @@ except:
 
 def get_stream_url(cid, SESSION):
     from .api import get_json_data
+    from .functions import get_kodi_version
+    stream_type = 'hls7' if get_kodi_version() < 21 else 'dash'
     try:
-        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':'hls7', 'https_watch_urls':True})
+        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':stream_type, 'https_watch_urls':True})
     except HTTPError:
         from .api import login
         login()
         import xbmcaddon
         addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
         SESSION = addon.getSetting('session')
-        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':'hls7', 'https_watch_urls':True})
+        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':stream_type, 'https_watch_urls':True})
     return json.loads(json_data)['stream']['url']
