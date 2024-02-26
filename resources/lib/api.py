@@ -22,7 +22,7 @@ standard_header = {
     'Accept': 'application/json',
     'Content-Type': 'application/x-www-form-urlencoded',
     'Referer': 'https://zattoo.com/client',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
 }
 default_app_version = '3.2330.2'
 
@@ -89,6 +89,10 @@ def uniq_id():
     elif xbmc.getCondVisibility('System.Platform.Android'):
         device_id = str(UUID(md5(self.get_android_uuid().encode('utf-8')).hexdigest()))
 
+    if not device_id:
+        xbmc.log('It is not possible to get a system UUID creating a new UUID')
+        device_id = _get_fake_uuid(xbmc.getCondVisibility('system.platform.linux') == False)
+
     if device_id == '':
         xbmc.log('[{0}] error: failed to get device id ({1})'.format(addon.getAddonInfo('id'), str(mac_addr)))
     addon.setSetting(id='device_id', value=device_id)
@@ -115,6 +119,17 @@ def get_android_uuid(self):
     except Exception:
         pass
     return values
+
+
+def _get_fake_uuid(with_hostname):
+    import platform
+    list_values = [xbmc.getInfoLabel('System.Memory(total)')]
+    if with_hostname:
+        try:
+            list_values.append(platform.node())
+        except Exception:
+            pass
+    return '_'.join(list_values)
 
 
 def extract_session_id(cookie_dict):
