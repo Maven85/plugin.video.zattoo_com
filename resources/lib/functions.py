@@ -35,16 +35,21 @@ def set_videoinfo(listitem, infolabels, kodi_version):
 
 def set_streaminfo(listitem, streamlabels, kodi_version):
 
-        if kodi_version >= 20:
-            videoinfotag = listitem.getVideoInfoTag()
-            import xbmc
-            videostream = xbmc.VideoStreamDetail()
+    if kodi_version >= 20:
+        videoinfotag = listitem.getVideoInfoTag()
+        import xbmc
+        videostream = xbmc.VideoStreamDetail()
 
-            if streamlabels.get('duration') is not None:
-                videostream.setDuration(streamlabels.get('duration'))
+        if streamlabels.get('duration') is not None:
+            videostream.setDuration(streamlabels.get('duration'))
 
-            videoinfotag.addVideoStream(videostream)
-        else:
-            listitem.addStreamInfo('video', streamlabels)
+        videoinfotag.addVideoStream(videostream)
+    else:
+        listitem.addStreamInfo('video', streamlabels)
 
-        return listitem
+    return listitem
+
+
+def get_kodi_version():
+    from xbmc import getInfoLabel
+    return int(getInfoLabel('System.BuildVersion').split('.')[0])
