@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.15+matrix.1" provider-name="PUR3, Maven">
+<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.16+matrix.1" provider-name="PUR3, Maven">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.kodi-six" version="0.1.3.1"/>
@@ -17,6 +17,6 @@
         <assets>
             <icon>icon.png</icon>
         </assets>
-        <news>1.2.15[CR]- fix: create fake uuid if it is not possible to get a system UUID[CR]- fix: use dash streams from Kodi 21 as hls not working</news>
+        <news>1.2.16[CR]- feat: option to select streaming protocoll when inputstream adaptive is installed[CR][CR]1.2.15[CR]- fix: create fake uuid if it is not possible to get a system UUID[CR]- fix: use dash streams from Kodi 21 as hls not working</news>
     </extension>
 </addon>
