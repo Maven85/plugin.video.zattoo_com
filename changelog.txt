@@ -1,3 +1,5 @@
+1.2.17
+- fix: dash streams cannot be played on Kodi Nexus and below
 1.2.16
 - feat: option to select streaming protocoll when inputstream adaptive is installed
 1.2.15
