@@ -13,13 +13,15 @@ if mode == 'watch':
     from resources.lib.watch import get_stream_url
     import xbmcplugin
     import xbmcgui
-    cid = params.get('id', '')
-    stream_url = get_stream_url(cid, SESSION)
-    listitem = xbmcgui.ListItem(path=stream_url)
-    if get_kodi_version() >= 21:
+    stream = get_stream_url(params.get('id', ''), params['level'], params['drm'], SESSION)
+    listitem = xbmcgui.ListItem(path=stream['url'])
+    if addon.getSetting('streaming_protocoll').lower() in ['dash', 'dash_widevine']:
         listitem.setContentLookup(False)
         listitem.setMimeType('application/dash+xml')
         listitem.setProperty('inputstream', 'inputstream.adaptive')
+        if stream.get('license_url'):
+            listitem.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+            listitem.setProperty('inputstream.adaptive.license_key', '%s||R{SSM}|' % (stream['license_url']))
 
     xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)
 elif mode == 'epg':

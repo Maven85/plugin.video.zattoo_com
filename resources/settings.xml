@@ -5,5 +5,6 @@
    <setting id="showFanart" label="30104" type="bool" default="false"/>
    <setting id="pg_hash" type="text" default="" visible="false"/>
    <setting id="session" type="text" default="" visible="false"/>
-   <setting label="device_id" type="text" id="device_id" default="" visible="false"/>
+   <setting id="device_id" type="text" default="" visible="false"/>
+   <setting id="streaming_protocoll" label="30105" type="select" values="HLS|DASH|DASH_WIDEVINE" default="HLS" visible="System.HasAddon(inputstream.adaptive)"/>
 </settings>
