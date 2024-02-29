@@ -1,3 +1,5 @@
+1.2.16
+- feat: option to select streaming protocoll when inputstream adaptive is installed
 1.2.15
 - fix: create fake uuid if it is not possible to get a system UUID
 - fix: use dash streams from Kodi 21 as hls not working
