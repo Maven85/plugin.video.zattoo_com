@@ -10,15 +10,17 @@ mode = params.get('mode', '')
 
 if mode == 'watch':
     from resources.lib.functions import get_kodi_version
-    from resources.lib.watch import get_stream_url
+    from resources.lib.watch import get_stream
     import xbmcplugin
     import xbmcgui
-    stream = get_stream_url(params.get('id', ''), params['level'], params['drm'], SESSION)
+    stream = get_stream(params.get('id', ''), params['level'], params['drm'], SESSION)
     listitem = xbmcgui.ListItem(path=stream['url'])
     if addon.getSetting('streaming_protocoll').lower() in ['dash', 'dash_widevine']:
         listitem.setContentLookup(False)
         listitem.setMimeType('application/dash+xml')
         listitem.setProperty('inputstream', 'inputstream.adaptive')
+        if get_kodi_version() <= 20:
+            listitem.setProperty('inputstream.adaptive.manifest_type', 'mpd')
         if stream.get('license_url'):
             listitem.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
             listitem.setProperty('inputstream.adaptive.license_key', '%s||R{SSM}|' % (stream['license_url']))
