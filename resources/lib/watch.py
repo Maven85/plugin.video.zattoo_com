@@ -11,17 +11,27 @@ except:
     from urlparse import urljoin
 
 
-def get_stream_url(cid, SESSION):
+def get_stream_url(cid, level, drm, SESSION):
     from .api import get_json_data
     from .functions import get_kodi_version
-    stream_type = 'hls7' if get_kodi_version() < 21 else 'dash'
+    import xbmcaddon
+    data = {'https_watch_urls': True}
+    addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
+    streaming_protocoll = addon.getSetting('streaming_protocoll').lower()
+    if streaming_protocoll in ['dash', 'dash_widevine']:
+        data['timeshift'] = 10800
+        if streaming_protocoll == 'dash' or level == 'sd' or drm == 'False':
+            streaming_protocoll = 'dash'
+        else:
+            streaming_protocoll = 'dash_widevine'
+    else:
+        streaming_protocoll = 'hls7'
+    data['stream_type'] = streaming_protocoll
     try:
-        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':stream_type, 'https_watch_urls':True})
+        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, data)
     except HTTPError:
         from .api import login
         login()
-        import xbmcaddon
-        addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
         SESSION = addon.getSetting('session')
-        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, {'stream_type':stream_type, 'https_watch_urls':True})
-    return json.loads(json_data)['stream']['url']
+        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, data)
+    return json.loads(json_data)['stream']
