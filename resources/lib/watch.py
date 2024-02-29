@@ -11,9 +11,8 @@ except:
     from urlparse import urljoin
 
 
-def get_stream_url(cid, level, drm, SESSION):
+def get_stream(cid, level, drm, SESSION):
     from .api import get_json_data
-    from .functions import get_kodi_version
     import xbmcaddon
     data = {'https_watch_urls': True}
     addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
