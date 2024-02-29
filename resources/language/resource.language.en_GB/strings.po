@@ -31,3 +31,7 @@ msgstr ""
 msgctxt "#30104"
 msgid "Show fanart"
 msgstr ""
+
+msgctxt "#30105"
+msgid "Streaming protocoll"
+msgstr ""

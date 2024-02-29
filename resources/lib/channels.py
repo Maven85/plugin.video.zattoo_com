@@ -68,12 +68,19 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
     if json_data['channels']:
         from .functions import set_videoinfo, set_streaminfo, get_kodi_version
         from xbmc import getInfoLabel
+        import xbmcaddon
         kodi_version = get_kodi_version()
         current_timestamp = int((utc_now.replace(second=0, microsecond=0) - s_epoch_datetime).total_seconds())
+        addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
+        streaming_protocoll = addon.getSetting('streaming_protocoll').lower()
         for channel in json_data['channels']:
             for quality in channel['qualities']:
                 if quality['availability'] == 'available':
                     id = channel['cid']
+                    level = quality.get('level', 'sd')
+                    drm_required = quality.get('drm_required', False)
+                    if drm_required and streaming_protocoll in ['hls', 'dash']:
+                        continue
                     epg_now = None
                     epg_next = None
                     for index, epg_data in enumerate(guide_data.get('channels').get(id)):
@@ -124,6 +131,6 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
                         item.addContextMenuItems(cmi)
                     if duration_in_seconds > 0:
                         item = set_streaminfo(item, dict(duration=duration_in_seconds), kodi_version)
-                    xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE, url='%s?mode=watch&id=%s' % (URI, id), listitem=item)
+                    xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE, url='%s?mode=watch&id=%s&level=%s&drm=%s' % (URI, id, level, drm_required), listitem=item)
                     break
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
