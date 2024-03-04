@@ -15,7 +15,7 @@ if mode == 'watch':
     import xbmcgui
     stream = get_stream(params.get('id', ''), params['level'], params['drm'], SESSION)
     listitem = xbmcgui.ListItem(path=stream['url'])
-    if addon.getSetting('streaming_protocoll').lower() in ['dash', 'dash_widevine']:
+    if addon.getSetting('streaming_protocol').lower() in ['dash', 'dash_widevine']:
         listitem.setContentLookup(False)
         listitem.setMimeType('application/dash+xml')
         listitem.setProperty('inputstream', 'inputstream.adaptive')
