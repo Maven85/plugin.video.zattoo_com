@@ -16,8 +16,8 @@ msgstr ""
 "Language: en_GB\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgctxt "#30101"
-msgid "Highest video quality"
+msgctxt "#30001"
+msgid "General"
 msgstr ""
 
 msgctxt "#30102"
@@ -33,5 +33,25 @@ msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30105"
-msgid "Streaming protocoll"
+msgid "Streaming"
+msgstr ""
+
+msgctxt "#30106"
+msgid "Streaming protocol"
+msgstr ""
+
+msgctxt "#30107"
+msgid "DRM level"
+msgstr ""
+
+msgctxt "#30108"
+msgid "HDCP"
+msgstr ""
+
+msgctxt "#30109"
+msgid ">= v1"
+msgstr ""
+
+msgctxt "#30110"
+msgid "Not available"
 msgstr ""

@@ -72,15 +72,15 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
         kodi_version = get_kodi_version()
         current_timestamp = int((utc_now.replace(second=0, microsecond=0) - s_epoch_datetime).total_seconds())
         addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
-        streaming_protocoll = addon.getSetting('streaming_protocoll').lower()
+        streaming_protocol = addon.getSetting('streaming_protocol').lower()
         for channel in json_data['channels']:
             for quality in channel['qualities']:
                 if quality['availability'] == 'available':
                     id = channel['cid']
                     level = quality.get('level', 'sd')
                     drm_required = quality.get('drm_required', False)
-                    if drm_required and streaming_protocoll in ['hls', 'dash']:
-                        continue
+                    if level == 'hd' and drm_required and streaming_protocol in ['hls', 'dash']:
+                        level = 'sd'
                     epg_now = None
                     epg_next = None
                     for index, epg_data in enumerate(guide_data.get('channels').get(id)):
