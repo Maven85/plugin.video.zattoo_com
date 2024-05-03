@@ -55,3 +55,7 @@ msgstr ">= v1"
 msgctxt "#30110"
 msgid "Not available"
 msgstr "Nicht vorhanden"
+
+msgctxt "#30111"
+msgid "Zattoo Smart HD"
+msgstr "Zattoo Smart HD"

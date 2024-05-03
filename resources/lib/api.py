@@ -144,9 +144,15 @@ def extract_session_id(cookie_dict):
 
 
 def get_session_cookie():
-    post_data = ('app_version={0}&client_app_token={1}&uuid={2}'.format(get_app_version(), get_client_app_token(), uniq_id())).encode('utf-8')
+    smart_hd = addon.getSetting('smart_hd')
+    smart_hd_store = addon.getSetting('smart_hd_store')
+    if smart_hd != smart_hd_store:
+        addon.setSetting(id='smart_hd_store', value=smart_hd)
+    if smart_hd == 'true':
+        post_data = ('app_version={0}&app_tid={1}&device_type={2}&uuid={3}'.format(get_app_version(), '01054a65-1f0d-4a00-a441-44c2ec5fa357', 'android_bigscreen 30/zattoo_2.2409.1/NVIDIA/SHIELD Android TV/mdarcy/1920x1080', uniq_id())).encode('utf-8')
+    else:
+        post_data = ('app_version={0}&client_app_token={1}&uuid={2}'.format(get_app_version(), get_client_app_token(), uniq_id())).encode('utf-8')
     req = Request('https://zattoo.com/zapi/v3/session/hello', post_data, standard_header)
-    xbmc.log('[{0}]: post_data = {1}'.format(addon.getAddonInfo('id'), post_data))
     response = urlopen(req)
     return extract_session_id([value for key, value in response.headers.items() if key.lower() == 'set-cookie'])
 
@@ -167,7 +173,7 @@ def get_json_data(api_url, cookie, post_data=None):
     req = Request(api_url, post_data, header)
     response = urlopen(req)
     new_cookie = extract_session_id([value for key, value in response.headers.items() if key.lower() == 'set-cookie'])
-    if new_cookie:
+    if cookie != new_cookie:
         update_session(new_cookie)
     return response.read()
 

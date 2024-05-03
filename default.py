@@ -33,6 +33,8 @@ elif mode == 'epg':
     list_epg_item(pid, SESSION, pg_hash)
 else:
     from resources.lib.channels import list_channels
-    USE_FANARTS = addon.getSetting('showFanart') == 'true'
+    use_fanart = addon.getSetting('showFanart') == 'true'
     pg_hash = addon.getSetting('pg_hash')
-    list_channels(SESSION, pg_hash, USE_FANARTS)
+    smart_hd = addon.getSetting('smart_hd')
+    smart_hd_store = addon.getSetting('smart_hd_store')
+    list_channels(SESSION, pg_hash, use_fanart, smart_hd != smart_hd_store)
