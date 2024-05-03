@@ -31,13 +31,13 @@ def round_seconds(seconds_to_round, round_to_nearest_seconds=300):
     return seconds_to_round
 
 
-def list_channels(session, pg_hash, USE_FANARTS=False):
+def list_channels(session, pg_hash, use_fanart=False, force_login=False):
     s_epoch_datetime = datetime(1970, 1, 1)
     utc_now = datetime.utcnow()
     s_datetime = utc_now.replace(minute=0, second=0, microsecond=0) - s_epoch_datetime
     s_utc = int(s_datetime.total_seconds())
     e_utc = int((s_datetime + timedelta(hours=6)).total_seconds())
-    if not pg_hash or not session:
+    if not pg_hash or not session or force_login:
         from .api import login
         login()
         import xbmcaddon
@@ -104,7 +104,7 @@ def list_channels(session, pg_hash, USE_FANARTS=False):
                             title = '%s: %s' % (title, subtitle)
 
                         art = dict(thumb='http://thumb.zattic.com/%s/500x288.jpg?r=%s' % (id, current_timestamp))
-                        if USE_FANARTS:
+                        if use_fanart:
                             try:
                                 fanart = channel['now']['i'].replace('format_480x360.jpg', 'format_1280x720.jpg')
                             except:

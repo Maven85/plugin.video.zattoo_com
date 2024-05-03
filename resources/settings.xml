@@ -2,6 +2,8 @@
 	<category label="30101">
 	   <setting id="username" label="30102" type="text" default=""/>
 	   <setting id="password" label="30103" type="text" option="hidden" enable="!eq(-1,)" default=""/>
+	   <setting id="smart_hd" label="30111" type="bool" default="false"/>
+	   <setting id="smart_hd_store" type="text" default="false" visible="false"/>
 	   <setting id="showFanart" label="30104" type="bool" default="false"/>
 	   <setting id="pg_hash" type="text" default="" visible="false"/>
 	   <setting id="session" type="text" default="" visible="false"/>
