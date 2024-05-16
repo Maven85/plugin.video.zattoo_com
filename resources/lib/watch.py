@@ -11,7 +11,7 @@ except:
     from urlparse import urljoin
 
 
-def get_stream(cid, level, drm, SESSION):
+def get_stream(mode, cid, sid, level, drm, SESSION):
     from .api import get_json_data
     import xbmcaddon
     data = {'https_watch_urls': True}
@@ -28,11 +28,19 @@ def get_stream(cid, level, drm, SESSION):
     else:
         streaming_protocol = 'hls7'
     data['stream_type'] = streaming_protocol
+
+    if mode == 'replay':
+        url = 'https://zattoo.com/zapi/v3/watch/replay/%s/%s' % (cid, sid)
+        data['pre_padding'] = 0
+        data['post_padding'] = 0
+    else:
+        url = 'https://zattoo.com/zapi/watch/live/%s' % cid
+
     try:
-        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, data)
+        json_data = get_json_data(url, SESSION, data)
     except HTTPError:
         from .api import login
         login()
         SESSION = addon.getSetting('session')
-        json_data = get_json_data('https://zattoo.com/zapi/watch/live/%s' % cid, SESSION, data)
+        json_data = get_json_data(url, SESSION, data)
     return json.loads(json_data)['stream']
