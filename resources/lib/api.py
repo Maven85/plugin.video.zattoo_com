@@ -165,6 +165,10 @@ def update_session(session):
     addon.setSetting(id='session', value=session)
 
 
+def update_replay_availability(replay_availability):
+    addon.setSetting(id='replay_availability', value=replay_availability)
+
+
 def get_json_data(api_url, cookie, post_data=None):
     header = standard_header.copy()
     header.update({'Cookie': 'beaker.session.id=' + cookie})
@@ -186,10 +190,11 @@ def login():
         return warning('Bitte Benutzerdaten eingeben!', exit=True)
     handshake_cookie = get_session_cookie()
     try:
-        login_json_data = get_json_data('https://zattoo.com/zapi/v3/account/login', handshake_cookie, {'login': USER_NAME, 'password': PASSWORD})
+        login_json_data = loads(get_json_data('https://zattoo.com/zapi/v3/account/login', handshake_cookie, {'login': USER_NAME, 'password': PASSWORD}))
     except HTTPError:
         from .functions import warning
         return warning('Falsche Logindaten!', exit=True)
-    import json
-    pg_hash = json.loads(login_json_data)['power_guide_hash']
+    pg_hash = login_json_data['power_guide_hash']
     update_pg_hash(pg_hash)
+    replay_availability = login_json_data.get('nonlive', {}).get('replay_availability', 'unavailable')
+    update_replay_availability('false' if replay_availability == 'unavailable' else 'false')

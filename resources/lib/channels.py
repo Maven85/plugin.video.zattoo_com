@@ -10,8 +10,10 @@ from .api import get_json_data
 
 try:
     from urllib.error import URLError, HTTPError
+    from urllib.parse import urlencode
 except:
     from urllib2 import URLError, HTTPError
+    from urllib import urlencode
 
 URI = sys.argv[0]
 ADDON_HANDLE = int(sys.argv[1])
@@ -73,6 +75,7 @@ def list_channels(session, pg_hash, use_fanart=False, force_login=False):
         current_timestamp = int((utc_now.replace(second=0, microsecond=0) - s_epoch_datetime).total_seconds())
         addon = xbmcaddon.Addon(id='plugin.video.zattoo_com')
         streaming_protocol = addon.getSetting('streaming_protocol').lower()
+        replay_availability = addon.getSetting('replay_availability') == 'true'
         for channel in json_data['channels']:
             for quality in channel['qualities']:
                 if quality['availability'] == 'available':
@@ -111,7 +114,11 @@ def list_channels(session, pg_hash, use_fanart=False, force_login=False):
                                 fanart = 'http://thumb.zattic.com/%s/1280x720.jpg' % id
                             art.update(dict(fanart=fanart))
                         duration_in_seconds = round_seconds(epg_now['e'] - current_timestamp)
-                        cmi = [('EPG Daten laden', 'RunPlugin(plugin://plugin.video.zattoo_com/?mode=epg&id=%s)' % epg_now['id'])]
+                        cmi = [
+                            ('EPG Daten laden', 'RunPlugin(plugin://plugin.video.zattoo_com/?mode=epg&id=%s)' % epg_now['id'])
+                        ]
+                        if replay_availability and epg_now['r_e'] == True:
+                            cmi.append(('Von Beginn abspielen', 'RunPlugin(plugin://plugin.video.zattoo_com/?%s)' % (urlencode(dict(mode='replay', id=id, sid=epg_now['id'], title=(title or channel_name), art=art)))))
 
                     if epg_next:
                         s_next = datetime.fromtimestamp(epg_next['s']).strftime('%H:%M')
