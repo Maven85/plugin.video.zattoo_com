@@ -22,7 +22,7 @@ if mode in ['watch', 'replay']:
         from resources.lib.functions import get_kodi_version
         listitem.setContentLookup(False)
         listitem.setMimeType('application/dash+xml')
-        listitem.setProperty('inputstream', 'inputstream.adaptive')
+        listitem.setProperty('inputstreamaddon' if get_kodi_version() <= 18 else 'inputstream', 'inputstream.adaptive')
         if get_kodi_version() <= 20:
             listitem.setProperty('inputstream.adaptive.manifest_type', 'mpd')
         if stream.get('license_url'):
