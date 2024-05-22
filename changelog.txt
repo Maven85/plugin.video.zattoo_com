@@ -1,3 +1,8 @@
+1.2.18
+- feat: DRM level and HDCP version settings when dash_widevine is selected
+- feat: option for smart hd abo
+- feat: start show at the beginning (contextmenu)
+- fix: dash streams cannot be played on Kodi Leia and below
 1.2.17
 - fix: dash streams cannot be played on Kodi Nexus and below
 1.2.16

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.17" provider-name="PUR3, Maven">
+<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.18" provider-name="PUR3, Maven">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodi-six" version="0.0.7"/>
@@ -8,7 +8,6 @@
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
     </extension>
-    <extension point="xbmc.service" library="startup.py"/>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary lang="de_DE">Über 75 TV-Sender als Livestreams auf dem Gerät deiner Wahl ansehen.</summary>
@@ -18,6 +17,19 @@
         <assets>
             <icon>icon.png</icon>
         </assets>
-        <news>1.2.17[CR]- fix: dash streams cannot be played on Kodi Nexus and below[CR][CR]1.2.16[CR]- feat: option to select streaming protocoll when inputstream adaptive is installed[CR][CR]1.2.15[CR]- fix: create fake uuid if it is not possible to get a system UUID[CR]- fix: use dash streams from Kodi 21 as hls not working</news>
+        <news>
+1.2.18
+- feat: DRM level and HDCP version settings when dash_widevine is selected
+- feat: option for smart hd abo
+- feat: start show at the beginning (contextmenu)
+- fix: dash streams cannot be played on Kodi Leia and below
+1.2.17
+- fix: dash streams cannot be played on Kodi Nexus and below
+1.2.16
+- feat: option to select streaming protocoll when inputstream adaptive is installed
+1.2.15
+- fix: create fake uuid if it is not possible to get a system UUID
+- fix: use dash streams from Kodi 21 as hls not working
+        </news>
     </extension>
 </addon>
