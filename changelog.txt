@@ -1,3 +1,5 @@
+1.2.19
+- fix: generation of a UUID for Android
 1.2.18
 - feat: DRM level and HDCP version settings when dash_widevine is selected
 - feat: option for smart hd abo

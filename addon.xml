@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.18+matrix.1" provider-name="PUR3, Maven">
+<addon id="plugin.video.zattoo_com" name="Zattoo Live TV" version="1.2.19+matrix.1" provider-name="PUR3, Maven">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.kodi-six" version="0.1.3.1"/>
@@ -19,6 +19,8 @@
             <icon>icon.png</icon>
         </assets>
         <news>
+1.2.19
+- fix: generation of a UUID for Android
 1.2.18
 - feat: DRM level and HDCP version settings when dash_widevine is selected
 - feat: option for smart hd abo
