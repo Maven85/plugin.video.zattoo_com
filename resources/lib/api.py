@@ -87,7 +87,7 @@ def uniq_id():
     if py2_encode(':') in mac_addr:
         device_id = str(UUID(md5(mac_addr.encode('utf-8')).hexdigest()))
     elif xbmc.getCondVisibility('System.Platform.Android'):
-        device_id = str(UUID(md5(self.get_android_uuid().encode('utf-8')).hexdigest()))
+        device_id = str(UUID(md5(get_android_uuid().encode('utf-8')).hexdigest()))
 
     if not device_id:
         xbmc.log('It is not possible to get a system UUID creating a new UUID')
@@ -99,7 +99,7 @@ def uniq_id():
     return device_id
 
 
-def get_android_uuid(self):
+def get_android_uuid():
     from subprocess import PIPE as subprocess_PIPE, Popen as subprocess_Popen
     from re import sub as re_sub
     values = ''
